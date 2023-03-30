@@ -26,6 +26,8 @@ import functools
 cudnn.deterministic = True
 cudnn.benchmark = False
 
+# Lawrence's local PC hotfix for flower's RPC Error: Stream Removes see https://github.com/adap/flower/issues/699
+# This is apparently caused by a faulty default GRPC polling strategy causing race conditions between processes
 
 def get_eval_fn(config_dict, net, device, global_acc_dict):
     """Return an evaluation function for server-side evaluation."""
@@ -66,11 +68,16 @@ def server_run(config_dict):
             max_utilization_client_per_gpu = -(concurrent_clients // -num_gpu)
             max_utilization_gpu_per_client = 1.0 / max_utilization_client_per_gpu
 
-            gpu_per_client = max(specified_gpu_per_client, max_utilization_gpu_per_client)
+            # Lawrence HOTFIX: Replaced with min so as not to max out my own GPU
+            gpu_per_client = min(specified_gpu_per_client, max_utilization_gpu_per_client)
+
+            breakpoint()
 
             print(f"GPU Allocation for Simulation:\n\tnum_gpu: {num_gpu}\n\tGPU memory per device: {vram_per_device} MB\n\tConcurrent clinets: {concurrent_clients}\n\tGPU percentage per client: {gpu_per_client:.2%}\n\tMemory_per_client: {gpu_per_client * vram_per_device:.2f} MB\n\tmaximum_clients_per_gpu: {int(1/gpu_per_client)}\n\tmaximum_concurrent_clients: {int(1/gpu_per_client) * num_gpu}\n\tSpecified gpu percentage {specified_gpu_per_client:.2%}, memory {vram_per_client_MB} MB" +
                 (" (Overriden because more resources available)" if specified_gpu_per_client < max_utilization_gpu_per_client else "")            
             )
+            
+
         else:
             print(f"GPU not available, GPU percentage per client: {gpu_per_client:.2%}")
 

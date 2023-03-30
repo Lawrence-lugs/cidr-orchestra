@@ -4,18 +4,18 @@ config_dict = {
     #### Data ####
     'dataset': 'CIFAR10', # choices: CIFAR10, CIFAR100
     'seed': 1, # set random seed
-    'num_clients': 100, # choices: Int
+    'num_clients': 2, # choices: Int
     'alpha': 1e-1,  # choices= 1e-2, 1e-1, 1e0, 1e1, 1e2, 1e3, 1e4, 1e5
     'data_dir': './data/', # where data is located
     'save_dir': '.', # where model directory is to be created
-    'force_restart_training': True, # set False if you want to restart federated training from the last global server model
-    'force_restart_hparam': True, # set False if you want to restart unsupervised hyperparameter tuning from the last global server model
+    'force_restart_training': False, # set False if you want to restart federated training from the last global server model
+    'force_restart_hparam': False, # set False if you want to restart unsupervised hyperparameter tuning from the last global server model
 
     #### GPU and virtualization ####
     'main_device': 'cuda:0', # choices: 0--7
     'CUDA_VISIBLE_DEVICES': '0,1,2,3,4,5,6,7', # choices: 0--7
     'virtualize': True, # choices: True, False
-    'client_vram': 3000, # vram for client in MB
+    'client_vram': 1000, # vram for client in MB
 
     #### Training config ####
     # Train/eval technique
